@@ -11,9 +11,12 @@ Widget graphRect(int? a, List<Map<String, dynamic>> pesosConColor) {
     child: Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text('Nodo $a', style: const TextStyle(fontWeight: FontWeight.bold)),
+        Text('Ciudad $a', style: const TextStyle(fontWeight: FontWeight.bold)),
         const SizedBox(height: 4),
-        Text('Pesos:', style: TextStyle(fontSize: 10, color: Colors.grey[700])),
+        Text(
+          'Costos:',
+          style: TextStyle(fontSize: 10, color: Colors.grey[700]),
+        ),
         ...pesosConColor.map(
           (item) => Text(
             '→ ${item['peso']}',

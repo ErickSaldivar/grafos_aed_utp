@@ -98,7 +98,7 @@ class _GrafosState extends State<Grafos> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const Text(
-              'Proyecto Final Grafos para Algoritmos y Estructuras de Datos',
+              'Camino más corto usando Dijkstra',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
@@ -236,7 +236,7 @@ class _GrafosState extends State<Grafos> {
                   ),
                   const SizedBox(width: 20),
                   Container(
-                    width: 650,
+                    width: 700,
                     height: 420,
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.blue, width: 2),
