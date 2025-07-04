@@ -17,7 +17,9 @@ class TextFieldCosto extends StatelessWidget {
       child: TextField(
         controller: controller,
         decoration: InputDecoration(
-          border: OutlineInputBorder(),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.blue),
+          ),
           labelText: ciudad,
           hintText: '\$ 0.00',
           floatingLabelBehavior: FloatingLabelBehavior.always,

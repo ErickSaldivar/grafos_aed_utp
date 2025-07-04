@@ -23,7 +23,7 @@ class _CostesState extends State<Costes> {
     (_) => TextEditingController(),
   );
   //String buffer que imprimira todo el resultado
-  StringBuffer sb = StringBuffer('Plan de envío:\n\n');
+  StringBuffer sb = StringBuffer('');
 
   int option = 0;
 
@@ -34,8 +34,8 @@ class _CostesState extends State<Costes> {
     costosText[1][0].text = '0.03';
     costosText[1][1].text = '0.11';
     costosText[1][2].text = '0.04';
-    ofertaText[0].text = '2500';
-    ofertaText[1].text = '2500';
+    ofertaText[0].text = '5000';
+    ofertaText[1].text = '5000';
     demandaText[0].text = '4000';
     demandaText[1].text = '2000';
     demandaText[2].text = '2500';
@@ -70,7 +70,7 @@ class _CostesState extends State<Costes> {
 
     List<String> imprentas = ['Los Ángeles', 'Nueva York'];
     List<String> distribuidores = ['Chicago', 'Seattle', 'Washington D.C.'];
-
+    sb.writeln('Plan de envío (Método de costo mínimo):\n');
     for (int i = 0; i < plan.length; i++) {
       for (int j = 0; j < plan[0].length; j++) {
         if (plan[i][j] > 0) {
@@ -87,7 +87,48 @@ class _CostesState extends State<Costes> {
   }
 
   void resolverVoguel() {
-    sb.writeln('Falta Implementar');
+    List<List<double>> costos = List.generate(2, (_) => List.filled(3, 0.0));
+    List<int> oferta = List.filled(2, 0);
+    List<int> demanda = List.filled(3, 0);
+
+    //Leer Costos
+    for (var i = 0; i < 2; i++) {
+      for (var j = 0; j < 3; j++) {
+        costos[i][j] = double.parse(costosText[i][j].text);
+      }
+    }
+
+    //Leer Ofertas
+    for (var i = 0; i < 2; i++) {
+      oferta[i] = int.parse(ofertaText[i].text);
+    }
+
+    //Leer Demandas
+    for (var i = 0; i < 3; i++) {
+      demanda[i] = int.parse(demandaText[i].text);
+    }
+
+    Transporte transporte = Transporte(costos, oferta, demanda);
+    sb.writeln(transporte.resolverVogelConDetalle());
+
+    List<List<int>> plan = transporte.getPlan();
+
+    List<String> imprentas = ['Los Ángeles', 'Nueva York'];
+    List<String> distribuidores = ['Chicago', 'Seattle', 'Washington D.C.'];
+
+    for (int i = 0; i < plan.length; i++) {
+      for (int j = 0; j < plan[0].length; j++) {
+        if (plan[i][j] > 0) {
+          sb.writeln(
+            '- ${imprentas[i]} → ${distribuidores[j]}: ${plan[i][j]} revistas',
+          );
+        }
+      }
+    }
+
+    sb.writeln(
+      '\nCosto total: \$${transporte.getCostoTotal().toStringAsFixed(2)}',
+    );
   }
 
   void limpiarValores() {
@@ -98,16 +139,20 @@ class _CostesState extends State<Costes> {
       }
       ofertaText[i].clear();
     }
+    sb.clear();
+    setState(() {});
   }
 
   void resolverBtn() {
-    if (option == 0) {
-      resolverCostoMinimo();
+    sb.clear();
+    Future.delayed(Duration.zero, () {
+      if (option == 0) {
+        resolverCostoMinimo();
+      } else {
+        resolverVoguel();
+      }
       setState(() {});
-    } else {
-      resolverVoguel();
-      setState(() {});
-    }
+    });
   }
 
   @override
@@ -117,10 +162,14 @@ class _CostesState extends State<Costes> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            SizedBox(height: 20),
+            SizedBox(height: 10),
             Text(
-              'Ingrese los costos de envio (\$ por revista)',
-              style: TextStyle(fontSize: 18, color: Colors.grey[700]),
+              'Cálculo de costos de envío Magazine INC.',
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              'Ingrese los costos de envío (\$ por revista)',
+              style: TextStyle(fontSize: 12, color: Colors.grey[700]),
             ),
             const SizedBox(height: 20),
             SizedBox(
@@ -129,8 +178,10 @@ class _CostesState extends State<Costes> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const SizedBox(width: 65),
-                  Text('Los Angeles'),
-                  const SizedBox(width: 65),
+                  Text(
+                    'Los Angeles ->',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   TextFieldCosto(
                     controller: costosText[0][0],
                     ciudad: 'Chicago',
@@ -153,8 +204,10 @@ class _CostesState extends State<Costes> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const SizedBox(width: 70),
-                  Text('Nueva York'),
-                  const SizedBox(width: 65),
+                  Text(
+                    'Nueva York ->',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   TextFieldCosto(
                     controller: costosText[1][0],
                     ciudad: 'Chicago',
@@ -170,7 +223,7 @@ class _CostesState extends State<Costes> {
                 ],
               ),
             ),
-            const SizedBox(height: 20),
+
             SizedBox(
               width: 950,
               child: Row(
@@ -181,7 +234,10 @@ class _CostesState extends State<Costes> {
                     height: 115,
                     child: Row(
                       children: [
-                        const Text('Ofertas:'),
+                        const Text(
+                          'Ofertas:',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
                         const SizedBox(width: 20),
                         Column(
                           children: [
@@ -204,7 +260,10 @@ class _CostesState extends State<Costes> {
                     height: 175,
                     child: Row(
                       children: [
-                        const Text('Demandas:'),
+                        const Text(
+                          'Demandas:',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
                         const SizedBox(width: 20),
                         Column(
                           children: [
@@ -254,7 +313,6 @@ class _CostesState extends State<Costes> {
                           onPressed: (index) {
                             setState(() {
                               option = index;
-                              sb = StringBuffer('Plan de envío:\n\n');
                             });
                           },
                           borderColor: Colors.blue,
@@ -283,18 +341,22 @@ class _CostesState extends State<Costes> {
                             ),
                           ],
                         ),
-                        ElevatedButton(
-                          onPressed: resolverBtn,
-                          style: ButtonStyle(
-                            backgroundColor: WidgetStateProperty.all(
-                              Colors.blue,
+                        SizedBox(
+                          width: 200,
+                          child: ElevatedButton(
+                            onPressed: resolverBtn,
+                            style: ButtonStyle(
+                              backgroundColor: WidgetStateProperty.all(
+                                Colors.blue,
+                              ),
+                              elevation: WidgetStatePropertyAll(15.0),
                             ),
-                          ),
-                          child: Text(
-                            'RESOLVER',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black87,
+                            child: Text(
+                              'RESOLVER',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),
@@ -304,13 +366,13 @@ class _CostesState extends State<Costes> {
                 ],
               ),
             ),
-            const SizedBox(height: 20),
+
             Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(color: Colors.blue, width: 2),
               ),
-              height: 168,
+              height: 226,
               width: 600,
               child: Stack(
                 clipBehavior: Clip.none,
@@ -327,7 +389,22 @@ class _CostesState extends State<Costes> {
                       ),
                     ),
                   ),
-                  Positioned(top: 20, left: 20, child: Text(sb.toString())),
+                  Positioned.fill(
+                    top: 15,
+                    left: 20,
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: SingleChildScrollView(
+                        child: Text(
+                          sb.toString(),
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
