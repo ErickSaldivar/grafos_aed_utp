@@ -14,7 +14,7 @@ class Transporte {
       plan = List.generate(
         oferta.length,
         (_) => List.filled(demanda.length, 0),
-      );
+      ); // Inicializa el plan con ceros
 
   void resolverCostoMinimo() {
     List<int> ofertaActual = List<int>.from(oferta);
@@ -108,7 +108,8 @@ class Transporte {
             min2 = v;
           }
         }
-        if (min2 == double.infinity) continue;
+        if (min2 == double.infinity)
+          continue; // Si min2 es infinito, no hay suficientes valores
         double pen = min2 - min1;
         double minAbs = min1;
         if (pen > maxPen || (pen == maxPen && minAbs < mejorMinAbs)) {
@@ -121,13 +122,17 @@ class Transporte {
 
       // 3) Si no se encontró penalidad válida, asignación final en la primera celda libre
       if (idx == -1) {
+        // Selección de la primera celda libre
         int iSel = filaOcupada.indexWhere(
           (oc) => !oc && ofertaActual[filaOcupada.indexOf(oc)] > 0,
         );
+        // Si no hay fila libre, buscar columna libre
         int jSel = colOcupada.indexWhere(
           (oc) => !oc && demandaActual[colOcupada.indexOf(oc)] > 0,
         );
+        // Si no hay fila ni columna libre, terminamos
         if (iSel == -1 || jSel == -1) break;
+        // Asignación final en la celda libre
         int q = Math.min(ofertaActual[iSel], demandaActual[jSel]);
         plan[iSel][jSel] = q;
         ofertaActual[iSel] -= q;

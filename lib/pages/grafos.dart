@@ -153,7 +153,7 @@ class _GrafosState extends State<Grafos> {
                           setState(() {
                             keyResultado = true;
                             resultadoRich = [];
-                            final resultadoDijkstra = algoritmos.disjkstra(
+                            final resultadoDijkstra = algoritmos.dijkstra(
                               nodoInicial,
                             );
                             final rutas = resultadoDijkstra['rutas'];
