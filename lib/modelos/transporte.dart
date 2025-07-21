@@ -108,8 +108,9 @@ class Transporte {
             min2 = v;
           }
         }
-        if (min2 == double.infinity)
+        if (min2 == double.infinity) {
           continue; // Si min2 es infinito, no hay suficientes valores
+        }
         double pen = min2 - min1;
         double minAbs = min1;
         if (pen > maxPen || (pen == maxPen && minAbs < mejorMinAbs)) {
